@@ -49,12 +49,56 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 		wprintf(L"No command line argument.");
 		return -1;
 	}
-	int cnt=0;
-	while (lpCmdLine[cnt]!= ' '&& lpCmdLine[cnt] !=0) {
+	//int cnt=0;
+	//while (lpCmdLine[cnt]!= ' '&& lpCmdLine[cnt] !=0) {
+	//	cnt++;
+	//}
+	//lpCmdLine[cnt] = 0;
+	//printf("The first parameter was: %s", lpCmdLine);
+
+	//read  parameters	
+	int cnt = 0;
+	int startCnt = 0;
+	char* scale = "";
+	char* quantization = "";
+	char* mode = "";
+
+	while (lpCmdLine[cnt] != ' ' && lpCmdLine[cnt] != 0) {
 		cnt++;
 	}
 	lpCmdLine[cnt] = 0;
-	printf("The first parameter was: %s", lpCmdLine);
+	printf("The first parameter was: %s \n", lpCmdLine);
+
+	cnt++;
+	startCnt = cnt;
+	scale = &lpCmdLine[startCnt];
+	while (lpCmdLine[cnt] != ' ' && lpCmdLine[cnt] != 0)
+	{
+		cnt++;
+	}
+	lpCmdLine[cnt] = 0;
+	printf("The second parameter was: %s \n", &lpCmdLine[startCnt]);
+
+	cnt++;
+	startCnt = cnt;
+	quantization = &lpCmdLine[startCnt];
+	while (lpCmdLine[cnt] != ' ' && lpCmdLine[cnt] != 0)
+	{
+		cnt++;
+	}
+	lpCmdLine[cnt] = 0;
+	printf("The third parameter was: %s \n", &lpCmdLine[startCnt]);
+
+	cnt++;
+	startCnt = cnt;
+	mode = &lpCmdLine[startCnt];
+	while (lpCmdLine[cnt] != ' ' && lpCmdLine[cnt] != 0)
+	{
+		cnt++;
+	}
+	lpCmdLine[cnt] = 0;
+	printf("The fourth parameter was: %s \n", &lpCmdLine[startCnt]);
+
 
 	// Set up the images
 	// Modify the height and width values here to read and display an image with
@@ -66,6 +110,9 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
 	inImage.setImagePath(lpCmdLine);
 	inImage.ReadImage();
+
+	inImage.Modify(scale, quantization, mode);
+	//inImage.WriteImage();
 
 	// Initialize global strings
 	LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);

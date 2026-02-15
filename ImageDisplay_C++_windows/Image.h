@@ -63,7 +63,7 @@ public:
 
 	// Modifications
 	bool	Modify();
-
+	bool	Modify(char* scaleCh, char* quantizationCh, char* modeCh);
 };
 
 #endif //IMAGE_DISPLAY

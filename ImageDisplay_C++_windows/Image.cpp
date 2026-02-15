@@ -8,7 +8,8 @@
 //*****************************************************************************
 
 #include "Image.h"
-
+#include <string>
+#include <iostream>
 
 // Constructor and Desctructors
 MyImage::MyImage() 
@@ -201,4 +202,50 @@ bool MyImage::Modify()
 	}
 
 	return false;
+}
+
+bool MyImage::Modify(char* scaleCh, char* quantizationCh, char* modeCh)
+{
+
+	float scale = std::stof(scaleCh);
+	int quantization = std::stof(quantizationCh);
+	int mode = std::stof(modeCh);
+
+	//scale
+	scale = 0.5f;
+	int oldWidth = Width ;
+	int oldHeight = Height;
+	int newWidth = oldWidth * scale;
+	int newHeight = oldHeight * scale;
+
+	char* newData = new char[newWidth * newHeight * 3];
+
+	for (int y = 0; y < newHeight; y++) //row, y
+	{
+		for (int x = 0; x < newWidth; x++) //cols, x
+		{
+			int oldX = x /scale;
+			int oldY = y / scale;
+			int oldIndex = (oldY * oldWidth + oldX) * 3;
+			int newIndex = (y * newWidth + x) * 3;
+
+			newData[newIndex] = Data[oldIndex]; //r
+			newData[newIndex + 1] = Data[oldIndex + 1]; //g
+			newData[newIndex + 2] = Data[oldIndex + 2]; //b
+
+
+		}
+	}
+	delete[] Data;
+	Data = newData;
+	Width = newWidth;
+	Height = newHeight;
+
+
+	return 0;
+}
+
+int AverageKernel()
+{
+	return 0;
 }
