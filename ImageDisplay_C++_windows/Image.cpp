@@ -15,6 +15,9 @@
 #define NOMINMAX
 #include <Windows.h>
 
+#include <cmath>
+#include <vector>
+
 // Constructor and Desctructors
 MyImage::MyImage() 
 {
@@ -212,16 +215,15 @@ int roundNum(float num)
 	return static_cast<int>(num + 0.5f);
 }
 
-bool MyImage::Modify(char* scaleCh, char* quantizationCh, char* modeCh)
+bool MyImage::Modify(char* scaleCh, char* quantizationCh, char* modeCh, char* extraCh)
 {
-
-
 	float scale = std::stof(scaleCh);
 	int quantization = std::stoi(quantizationCh);
 	int mode = std::stoi(modeCh);
+	int extra = std::stoi(extraCh);
 
 	//scale
-	scale = 0.8f;
+	//scale = 0.8f;
 	int oldWidth = Width ;
 	int oldHeight = Height;
 	int newWidth = static_cast<int>( oldWidth * scale);
@@ -247,9 +249,9 @@ bool MyImage::Modify(char* scaleCh, char* quantizationCh, char* modeCh)
 			int oldIndex = (oldY * oldWidth + oldX) * 3;
 			int newIndex = y * paddedRowSize + x * 3;
 
-			newData[newIndex] = AverageKernel(0, oldX, oldY, oldWidth, oldHeight); //r
-			newData[newIndex + 1] = AverageKernel(1, oldX, oldY, oldWidth, oldHeight); //g
-			newData[newIndex + 2] = AverageKernel(2, oldX, oldY, oldWidth, oldHeight); //b
+			newData[newIndex] = static_cast<unsigned char>(AverageKernel(0, oldX, oldY, oldWidth, oldHeight)); //r
+			newData[newIndex + 1] = static_cast<unsigned char>(AverageKernel(1, oldX, oldY, oldWidth, oldHeight)); //g
+			newData[newIndex + 2] = static_cast<unsigned char>(AverageKernel(2, oldX, oldY, oldWidth, oldHeight)); //b
 
 
 			//newData[newIndex] = Data[oldIndex]; //r
@@ -264,6 +266,26 @@ bool MyImage::Modify(char* scaleCh, char* quantizationCh, char* modeCh)
 	Width = newWidth;
 	Height = newHeight;
 
+	//quantization
+	//quantization = 12;
+	//mode = 256;
+	bool isValidQuantization = (quantization % 3 == 0) 
+		&& (quantization > 0) && (quantization <= 256);
+	if (isValidQuantization)
+	{
+		if (mode == -1)
+		{
+			LinearQuantization(quantization);
+		}
+		else if (mode >= 0 && mode <= 255)
+		{
+			LogarithmicQuantization(quantization, mode);
+		}
+		else if (mode == 256)
+		{
+			OptimalIntervalQuantization(quantization);
+		}
+	}
 
 	return 0;
 }
@@ -295,4 +317,145 @@ int MyImage::AverageKernel(int color, int oldX, int oldY, int oldWidth, int oldH
 	//std::cout << "sum: " <<sum << " avg: " << avg<< std::endl;
 
 	return avg;
+}
+
+void MyImage::LinearQuantization(int quantization)
+{
+	int bitsPerChannel = quantization / 3;
+	int levels = 1 << bitsPerChannel; // 2^bitsPerChannel
+	float interval = 256.0f / levels;
+
+	for (int i = 0; i < Width * Height * 3; i++)
+	{
+		int value = Data[i];
+		int index = static_cast<int>(value / interval);
+		if (index >= levels) index = levels - 1; // Handle edge case where value is 255, set to max level
+		int quantizedValue = static_cast<int>(value / interval) * interval + interval / 2; //index * interval -> middle val
+		Data[i] = static_cast<unsigned char>(quantizedValue);
+	}
+}
+
+void MyImage::LogarithmicQuantization(int quantization, int mode)
+{
+	int bitsPerChannel = quantization / 3;
+	int levels = 1 << bitsPerChannel; // 2^bitsPerChannel //when 12, should be 16
+	int interval = 256 / levels;
+
+	for (int i = 0; i < Width * Height * 3; i++)
+	{
+		float value = static_cast<float>(Data[i]);
+		float normalizedVal = value / 255.0f; //range from 0 to 1
+
+		float logVal; //transform into log space
+		if (mode == 0) 	logVal = log(1 + normalizedVal); //if mode is 0, don't use mode
+		else logVal = log(1 + mode * normalizedVal) / log(1 + mode); //basically a fraction except with log, which is non linear. 1 keeps it from 0. (0-1)
+
+		int index = static_cast<int>(logVal * levels); //which level it belongs to
+		if (index >= levels) index = levels - 1;
+
+		float quantizedLog = (index + 0.5f) / levels; //middle value of level, get ratio according to levels. this will be used to get final pixel val
+
+		float reconstructed; //transform into linear space
+		if (mode == 0) reconstructed = (exp(quantizedLog * log(1)) - 1);
+		else reconstructed = (exp(quantizedLog * log(1 + mode)) - 1) / mode;
+
+		int finalValue = static_cast<int>(reconstructed * 255.0f + 0.5f); //transform into pixel range
+		//check bounds
+		if (finalValue < 0) finalValue = 0;
+		if (finalValue > 255) finalValue = 255;
+
+		//std::cout << "original: " << (int)Data[i] << " finalValue: " << finalValue << " i: "<<i << std::endl;
+
+		Data[i] = static_cast<unsigned char>(finalValue);
+	}
+}
+
+void MyImage::OptimalIntervalQuantization(int quantization)
+{
+	int bitsPerChannel = quantization / 3;
+	int levels = 1 << bitsPerChannel;
+
+	for (int color = 0; color < 3; color++)
+	{
+		//make histogram that counts how many pixels of each color value
+		std::vector<int> histogram(256, 0);
+		for (int i = color; i < Width * Height * 3; i += 3)
+		{
+			histogram[Data[i]]++;
+		}
+
+		//fill levelCount with the middle of each level
+		int interval = 256 / levels;
+		std::vector<float> levelCenters(levels, 0.0f);
+		for (int i = 0; i < levels; i++)
+		{
+			levelCenters[i] = (i + 0.5f) * interval;
+		}
+
+		bool isStable = true;
+		if (isStable)
+		{
+			isStable = false;
+			std::vector<float> newLevelCenters(levels, 0); //new center for each level
+			std::vector<float> levelCount(levels, 0); //count how many pixels belong to each level
+			//assign each intensity to closest level
+			for (int intensity = 0; intensity < 256; intensity++)
+			{
+				if (histogram[intensity] == 0) continue;
+
+				//find closest level to this intensity
+				int bestLevel = 0;
+				float minDist = std::fabs(intensity - levelCenters[0]);
+				for (int k = 0; k < levels; k++)
+				{
+					float dist = std::fabs(intensity - levelCenters[k]);
+					if (dist < minDist)
+					{
+						minDist = dist;
+						bestLevel = k;
+					}
+				}
+
+				newLevelCenters[bestLevel] += intensity * histogram[intensity];
+				levelCount[bestLevel] += histogram[intensity];
+
+			}
+
+			for (int k = 0; k < levels; k++)
+			{
+				if (levelCount[k] > 0)
+				{
+					float newCenter = newLevelCenters[k] / levelCount[k]; //average intensity for the level
+					if (fabs(newCenter - levelCenters[k]) > 0.5f) isStable = true;
+
+					levelCenters[k] = newCenter;
+				}
+			}
+		}
+
+		//do quantizatioin
+		for (int i = color; i < Width * Height * 3; i+=3)
+		{
+			int value = Data[i];
+
+			//find best index
+			int bestLevel = 0;
+			float minDist = std::fabs(value - levelCenters[0]);
+			for (int k = 0; k < levels; k++)
+			{
+				float dist = std::fabs(value - levelCenters[k]);
+				if (dist < minDist)
+				{
+					minDist = dist;
+					bestLevel = k;
+				}
+			}
+
+			int quantizedValue = static_cast<int>(levelCenters[bestLevel] + 0.5); 
+			if (quantizedValue < 0) quantizedValue = 0;
+			if (quantizedValue > 255) quantizedValue = 255;
+
+			Data[i] = static_cast<unsigned char>(quantizedValue);
+		}
+	}
 }

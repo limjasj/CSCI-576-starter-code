@@ -62,6 +62,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	char* scale = "";
 	char* quantization = "";
 	char* mode = "";
+	char* extra = "";
 
 	while (lpCmdLine[cnt] != ' ' && lpCmdLine[cnt] != 0) {
 		cnt++;
@@ -99,6 +100,16 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	lpCmdLine[cnt] = 0;
 	printf("The fourth parameter was: %s \n", &lpCmdLine[startCnt]);
 
+	cnt++;
+	startCnt = cnt;
+	extra = &lpCmdLine[startCnt];
+	while (lpCmdLine[cnt] != ' ' && lpCmdLine[cnt] != 0)
+	{
+		cnt++;
+	}
+	lpCmdLine[cnt] = 0;
+	printf("The fifth parameter was: %s \n", &lpCmdLine[startCnt]);
+
 
 	// Set up the images
 	// Modify the height and width values here to read and display an image with
@@ -111,7 +122,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	inImage.setImagePath(lpCmdLine);
 	inImage.ReadImage();
 
-	inImage.Modify(scale, quantization, mode);
+	inImage.Modify(scale, quantization, mode, extra);
 	//inImage.WriteImage();
 
 	// Initialize global strings
