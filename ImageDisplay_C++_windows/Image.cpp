@@ -247,10 +247,14 @@ bool MyImage::Modify(char* scaleCh, char* quantizationCh, char* modeCh)
 			int oldIndex = (oldY * oldWidth + oldX) * 3;
 			int newIndex = y * paddedRowSize + x * 3;
 
+			newData[newIndex] = AverageKernel(0, oldX, oldY, oldWidth, oldHeight); //r
+			newData[newIndex + 1] = AverageKernel(1, oldX, oldY, oldWidth, oldHeight); //g
+			newData[newIndex + 2] = AverageKernel(2, oldX, oldY, oldWidth, oldHeight); //b
 
-			newData[newIndex] = Data[oldIndex]; //r
-			newData[newIndex + 1] = Data[oldIndex + 1]; //g
-			newData[newIndex + 2] = Data[oldIndex + 2]; //b
+
+			//newData[newIndex] = Data[oldIndex]; //r
+			//newData[newIndex + 1] = Data[oldIndex + 1]; //g
+			//newData[newIndex + 2] = Data[oldIndex + 2]; //b
 
 			//std::cout << "oldX: " << oldX << " oldY: " << oldY << " newX: " << x << " newY: " << y << " R: " << (int)newData[newIndex] <<" G: " << (int)newData[newIndex + 1] << " B: " << (int)newData[newIndex + 2] << std::endl;
 		}
