@@ -107,6 +107,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	{
 		cnt++;
 	}
+	if (cnt == startCnt) extra = 0;
 	lpCmdLine[cnt] = 0;
 	printf("The fifth parameter was: %s \n", &lpCmdLine[startCnt]);
 
