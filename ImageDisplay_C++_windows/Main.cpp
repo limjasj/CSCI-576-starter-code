@@ -118,7 +118,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	inImage.setImagePath(lpCmdLine);
 	inImage.ReadImage();
 
-	inImage.Modify(scale, quantization, mode, extra);
+	inImage.Quantize(scale, quantization, mode, extra);
+	//inImage.Modify(scale, quantization, mode, extra);
 	//inImage.WriteImage();
 
 	// Initialize global strings

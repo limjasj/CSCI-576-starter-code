@@ -3,31 +3,36 @@
 C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Image.h(55,41): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   (compiling source file 'Image.cpp')
   
-C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Image.cpp(44,2): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Image.cpp(62,2): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Image.cpp(89,12): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Image.cpp(149,13): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Image.cpp(347,22): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Image.cpp(371,47): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Image.cpp(379,62): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Image.cpp(380,64): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Image.cpp(505,16): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Image.cpp(534,14): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Image.cpp(572,17): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Image.cpp(579,50): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Image.cpp(588,67): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Image.cpp(616,15): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Image.cpp(623,48): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Image.cpp(632,65): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Image.cpp(686,16): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Image.cpp(798,29): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Image.cpp(45,2): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Image.cpp(63,2): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Image.cpp(90,12): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Image.cpp(150,13): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   Main.cpp
   _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
 C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Image.h(55,41): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   (compiling source file 'Main.cpp')
   
 C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Main.cpp(45,2): warning C4996: 'freopen': This function or variable may be unsafe. Consider using freopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Main.cpp(271,5): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Main.cpp(273,5): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Main.cpp(266,5): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Main.cpp(268,5): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  Quantization.cpp
+  _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
+C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Image.h(55,41): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  (compiling source file 'Quantization.cpp')
+  
+C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Quantization.cpp(143,22): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Quantization.cpp(167,47): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Quantization.cpp(175,62): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Quantization.cpp(176,64): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Quantization.cpp(301,16): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Quantization.cpp(330,14): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Quantization.cpp(368,17): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Quantization.cpp(375,50): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Quantization.cpp(384,67): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Quantization.cpp(412,15): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Quantization.cpp(419,48): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Quantization.cpp(428,65): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Quantization.cpp(482,16): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Quantization.cpp(594,29): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
   Generating Code...
   Image.vcxproj -> C:\Users\limja\Documents\GitHub\CSCI-576-starter-code\ImageDisplay_C++_windows\Debug\Image.exe

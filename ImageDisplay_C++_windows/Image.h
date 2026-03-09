@@ -31,7 +31,7 @@
 class MyImage 
 {
 
-private:
+public:
 	int		Width;					// Width of Image
 	int		Height;					// Height of Image
 	char	ImagePath[_MAX_PATH];	// Image location
@@ -64,14 +64,15 @@ public:
 
 	// Modifications
 	bool	Modify();
-	bool Modify(char* scaleCh, char* quantizationCh, char* modeCh, char* extraCh);
+	bool Quantize(char* scaleCh, char* quantizationCh, char* modeCh, char* extraCh);
+	/*bool Modify(char* scaleCh, char* quantizationCh, char* modeCh, char* extraCh);
 	int AverageKernel(int color, int oldX, int oldY, int oldWidth, int oldHeight);
 	void LinearQuantization(int quantization);
 	void LinearQuantizationExtra(int quantization);
 	void LogarithmicQuantization(int quantization, int mode);
 	void LogarithmicQuantizationExtra(int quantization, int mode);
 	void OptimalIntervalQuantization(int quantization);
-	void OptimalIntervalQuantizationExtra(int quantization);
+	void OptimalIntervalQuantizationExtra(int quantization);*/
 
 
 
