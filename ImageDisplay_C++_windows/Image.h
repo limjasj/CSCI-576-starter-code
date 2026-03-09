@@ -9,6 +9,7 @@
 
 #ifndef IMAGE_DISPLAY
 #define IMAGE_DISPLAY
+#define CRT_SECURE_NO_WARNINGS
 
 #if _MSC_VER > 1000
 #pragma once
@@ -34,7 +35,7 @@ private:
 	int		Width;					// Width of Image
 	int		Height;					// Height of Image
 	char	ImagePath[_MAX_PATH];	// Image location
-	char*	Data;					// RGB data of the image
+	unsigned char*	Data;					// RGB data of the image
 
 public:
 	// Constructor
@@ -50,12 +51,12 @@ public:
 	// Reader & Writer functions
 	void	setWidth( const int w)  { Width = w; }; 
 	void	setHeight(const int h) { Height = h; }; 
-	void	setImageData( const char *img ) { Data = (char *)img; };
+	void	setImageData( const char *img ) { Data = (unsigned char *)img; };
 	void	setImagePath( const char *path) { strcpy(ImagePath, path); }
 	int		getWidth() { return Width; };
 	int		getHeight() { return Height; };
-	char*	getImageData() { return Data; };
-	char*	getImagePath() { return ImagePath; }
+	unsigned char*	getImageData() { return Data; };
+	 char*	getImagePath() { return ImagePath; }
 
 	// Input Output operations
 	bool	ReadImage();
@@ -63,7 +64,15 @@ public:
 
 	// Modifications
 	bool	Modify();
-	bool	Modify(char* scaleCh, char* quantizationCh, char* modeCh);
+	//sbool	Modify(char* scaleCh, char* quantizationCh, char* modeCh);
+	void OptimalIntervalQuantizationExtra(int quantization);
+	bool Modify(char* scaleCh, char* quantizationCh, char* modeCh, char* extraCh);
+	void LogarithmicQuantizationExtra(int quantization, int mode);
+	void LinearQuantizationExtra(int quantization);
+	void OptimalIntervalQuantization(int quantization);
+	void LogarithmicQuantization(int quantization, int mode);
+	void LinearQuantization(int quantization);
+	int AverageKernel(int color, int oldX, int oldY, int oldWidth, int oldHeight);
 };
 
 #endif //IMAGE_DISPLAY

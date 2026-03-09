@@ -13,6 +13,7 @@
 #include <algorithm>
 
 #define NOMINMAX
+#define CRT_SECURE_NO_WARNINGS
 #include <Windows.h>
 
 #include <cmath>

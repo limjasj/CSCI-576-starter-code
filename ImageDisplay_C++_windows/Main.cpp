@@ -14,6 +14,7 @@
 // Include class files
 #include "Image.h"
 #include <iostream>
+#define CRT_SECURE_NO_WARNINGS
 
 #define MAX_LOADSTRING 100
 
