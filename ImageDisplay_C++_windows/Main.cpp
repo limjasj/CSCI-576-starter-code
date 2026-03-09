@@ -50,12 +50,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 		wprintf(L"No command line argument.");
 		return -1;
 	}
-	//int cnt=0;
-	//while (lpCmdLine[cnt]!= ' '&& lpCmdLine[cnt] !=0) {
-	//	cnt++;
-	//}
-	//lpCmdLine[cnt] = 0;
-	//printf("The first parameter was: %s", lpCmdLine);
 
 	//read  parameters	
 	int cnt = 0;

@@ -64,15 +64,18 @@ public:
 
 	// Modifications
 	bool	Modify();
-	//sbool	Modify(char* scaleCh, char* quantizationCh, char* modeCh);
-	void OptimalIntervalQuantizationExtra(int quantization);
 	bool Modify(char* scaleCh, char* quantizationCh, char* modeCh, char* extraCh);
-	void LogarithmicQuantizationExtra(int quantization, int mode);
-	void LinearQuantizationExtra(int quantization);
-	void OptimalIntervalQuantization(int quantization);
-	void LogarithmicQuantization(int quantization, int mode);
-	void LinearQuantization(int quantization);
 	int AverageKernel(int color, int oldX, int oldY, int oldWidth, int oldHeight);
-};
+	void LinearQuantization(int quantization);
+	void LinearQuantizationExtra(int quantization);
+	void LogarithmicQuantization(int quantization, int mode);
+	void LogarithmicQuantizationExtra(int quantization, int mode);
+	void OptimalIntervalQuantization(int quantization);
+	void OptimalIntervalQuantizationExtra(int quantization);
+
+
+
+	
+	};
 
 #endif //IMAGE_DISPLAY
