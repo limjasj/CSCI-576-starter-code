@@ -51,6 +51,8 @@ private:
     vector<Block*> allBlocks;
 
 public:
+	vector<Block*> getAllBlocks() { return allBlocks; }
+
 	void Modify(char* modeCh, char* quantizerCh, char* bitsPerPixelCh, MyImage* thisImage);
 	
     void computeDCT(vector<vector<double>>& block, 
@@ -69,6 +71,9 @@ public:
 
     void saveDCT(string filename);
 
+	int testBlockSize(int Q, int N);
+
+    int getQcoeffSize(std::vector<std::vector<int>>& qcoeff, int N);
 };
 
 #endif

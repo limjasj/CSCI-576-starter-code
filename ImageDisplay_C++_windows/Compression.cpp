@@ -5,6 +5,7 @@
 #include <Windows.h>
 #include "Image.h"
 #include <iostream>
+#include <random>
 
 #define PI 3.141592653589793
 
@@ -16,7 +17,7 @@ void Compression::Modify(char* modeCh, char* quantizerCh, char* bitsPerPixelCh, 
     float bitsPerPixel = std::stoi(bitsPerPixelCh);
     
     //hard code values
-    quantizer = 6;
+    quantizer = 5;
     bitsPerPixel = -1;
 
     if (((quantizer == -1) && (bitsPerPixel == -1)) ||
@@ -28,12 +29,34 @@ void Compression::Modify(char* modeCh, char* quantizerCh, char* bitsPerPixelCh, 
 
     if (quantizer == -1)
     {
-        //calculate quantizer from bitsPerPixel
-        int totalPixels = image->Width * image->Height;
-        int totalBits = static_cast<int>(bitsPerPixel * totalPixels);
-        int bitsPerBlock = 64; // 8x8 block has 64 coefficients
-        int blocksPerImage = (totalPixels + 63) / 64; // round up to nearest block
-		quantizer = totalBits / (blocksPerImage * bitsPerBlock);
+        //int size = testBlockSize(1, 8);
+
+        //int targetBytes = image->Width * image->Height * bitsPerPixel / 8;
+		int targetBitsPerBlock = bitsPerPixel * 64; // 64 pixels in an 8x8 block
+		int targetBitsTotal = bitsPerPixel * image->Width * image->Height;
+
+        int low = 1;
+        int high = 20;   // or larger if needed
+        int bestQ = 1;
+
+        while (low <= high)
+        {
+            int mid = (low + high) / 2;
+
+            int size = testBlockSize(mid, 8);
+
+            if (size > targetBitsTotal)
+            {
+                // too big → increase compression
+                low = mid + 1;
+            }
+            else
+            {
+                bestQ = mid;
+                high = mid - 1;
+            }
+        }
+		quantizer = bestQ;
     }
 
     //input IMAGE
@@ -57,8 +80,7 @@ void Compression::Modify(char* modeCh, char* quantizerCh, char* bitsPerPixelCh, 
     //mode ==1
     //iterate through 8x8 blocks
 
-	int blockNum = 3;
-    //processBlock(0, 0, 8, quantizer);
+	//int blockNum = 3;
 
     for (int y = 0; y < image->Height; y += 8)
     {
@@ -75,6 +97,71 @@ void Compression::Modify(char* modeCh, char* quantizerCh, char* bitsPerPixelCh, 
 
 }
 
+int Compression::testBlockSize(int Q, int N)
+{
+    //whole image, not block
+
+    int totalBits = 0;
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    //std::uniform_int_distribution<> randWidth(0, image->Width);
+    //std::uniform_int_distribution<> randHeight(0, image->Height);
+
+    for (int y = 0; y < image->Height; y += 8)
+    {
+        for (int x = 0; x < image->Width; x += 8)
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                //int randomX = randWidth(gen);
+                //int randomY = randHeight(gen);
+
+                for (int c = 0; c < 3; c++)
+                {
+                    vector<vector<double>> block(N, vector<double>(N));
+                    vector<vector<double>> coeff(N, vector<double>(N));
+                    vector<vector<int>> qcoeff(N, vector<int>(N));
+
+                    // extract block
+                    for (int x = 0; x < N; x++) {
+                        for (int y = 0; y < N; y++) {
+                            block[x][y] = image->getPixel(x, y, c);
+                        }
+                    }
+
+                    // DCT
+                    computeDCT(block, coeff, N);
+
+                    // quantize
+                    quantizeBlock(coeff, qcoeff, N, Q);
+
+                    int qcoeffSize = getQcoeffSize(qcoeff, N);
+                    totalBits += qcoeffSize * 8;
+                }
+            }
+        }
+    }
+
+	int avg = totalBits ;
+    return avg;
+    
+}
+
+int Compression::getQcoeffSize(std::vector<std::vector<int>>& qcoeff, int N)
+{
+	int totalCoeff = 0;
+    for (int u = 0; u < N; u++)
+    {
+        for (int v = 0; v < N; v++)
+        {
+            if(qcoeff[u][v] != 0) {
+                totalCoeff++;
+			}
+        }
+    }
+
+	return totalCoeff;
+}
 
 void Compression::processBlock(int startX, int startY, int N, int Q)
 {
@@ -87,8 +174,6 @@ void Compression::processBlock(int startX, int startY, int N, int Q)
         vector<vector<double>> block(N, vector<double>(N));
         vector<vector<double>> coeff(N, vector<double>(N));
         vector<vector<int>> qcoeff(N, vector<int>(N));
-        vector<vector<double>> newCoeff(N, vector<double>(N));
-        vector<vector<double>> newBlock(N, vector<double>(N));
 
         // extract block
         for (int x = 0; x < N; x++) {
@@ -104,19 +189,17 @@ void Compression::processBlock(int startX, int startY, int N, int Q)
         quantizeBlock(coeff, qcoeff, N, Q);
 
         // inverse quantize
-        inverseQuantizeBlock(qcoeff, newCoeff, N, Q);
+        inverseQuantizeBlock(qcoeff, coeff, N, Q);
 
         // IDCT
-        computeIDCT(newCoeff, newBlock, N);
-
-        
+        computeIDCT(coeff, block, N);        
 
         // write pixels back
         for (int x = 0; x < N; x++)
         {
             for (int y = 0; y < N; y++)
             {
-                image->setPixel(startX + x, startY + y, c, round(newBlock[x][y]));
+                image->setPixel(startX + x, startY + y, c, round(block[x][y]));
             }
         }
 
@@ -195,6 +278,7 @@ void Compression::computeIDCT(std::vector<std::vector<double>>& coeff,
 void Compression::quantizeBlock(std::vector<std::vector<double>>& coeff,
     std::vector<std::vector<int>>& qcoeff, int N, int Q)
 {
+    //scale down
     double scale = pow(2.0, Q);
 
     for (int u = 0; u < N; u++)
@@ -210,6 +294,7 @@ void Compression::quantizeBlock(std::vector<std::vector<double>>& coeff,
 void Compression::inverseQuantizeBlock(std::vector<std::vector<int>>& qcoeff,
     std::vector<std::vector<double>>& coeff, int N, int Q)
 {
+    //scale up
     double scale = pow(2.0, Q);
 
     for (int u = 0; u < N; u++)
@@ -236,23 +321,12 @@ void Compression::saveDCT(string filename)
             {
                 for (auto currQCoeffVal : currQCoeff)
                 {
-                    //int N = qcoeff.size;
                     fwrite(&currQCoeffVal, sizeof(int), 1, f);
 
-                    //cout << currQCoeff << " ";
-                    /*for (int c = 0; c < 3; c++)
-                    {
-                        for (int i = 0; i < N * N; i++)
-                        {
-                            fwrite(&qcoeff[c][i], sizeof(int), 1, f);
-                        }
-                    }*/
                 }
             }
         }
     }
-
-    //Wcout <<  " "<<endl;
 
     fclose(f);
 }

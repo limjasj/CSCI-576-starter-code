@@ -18,8 +18,8 @@
 
 #include <cmath>
 #include <vector>
-#include "Quantization.h"
-#include "Compression.h"
+//#include "Quantization.h"
+//#include "Compression.h"
 
 // Constructor and Desctructors
 MyImage::MyImage() 
@@ -217,16 +217,18 @@ bool MyImage::Modify()
 bool MyImage::Quantize(char* scaleCh, char* quantizationCh, char* modeCh, char* extraCh)
 {
 	//Quantization::Modify(scaleCh, quantizationCh, modeCh, extraCh, this);
-	Quantization q;
-	q.Modify(scaleCh, quantizationCh, modeCh, extraCh, this);
+	//Quantization q;
+	quantizer = new Quantization();
+	quantizer->Modify(scaleCh, quantizationCh, modeCh, extraCh, this);
 
 	return false;
 }
 
 bool MyImage::Compress(char* modeCh, char* quantizerCh, char* bitsPerPixelCh)
 {
-	Compression c;
-	c.Modify(modeCh, quantizerCh, bitsPerPixelCh, this);
+	//Compression c;
+	compressor = new Compression();
+	compressor->Modify(modeCh, quantizerCh, bitsPerPixelCh, this);
 	return false;
 }
 

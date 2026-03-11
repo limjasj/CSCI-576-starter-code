@@ -24,7 +24,8 @@
 #include <malloc.h>
 #include <memory.h>
 #include <tchar.h>
-
+#include "Quantization.h"
+#include "Compression.h"
 
 // Class structure of Image 
 // Use to encapsulate an RGB image
@@ -36,6 +37,9 @@ public:
 	int		Height;					// Height of Image
 	char	ImagePath[_MAX_PATH];	// Image location
 	unsigned char*	Data;					// RGB data of the image
+
+	 Compression* compressor;
+	 Quantization* quantizer;
 
 public:
 	// Constructor

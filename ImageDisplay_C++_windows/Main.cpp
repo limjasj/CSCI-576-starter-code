@@ -14,6 +14,7 @@
 // Include class files
 #include "Image.h"
 #include <iostream>
+#include <vector>
 #define CRT_SECURE_NO_WARNINGS
 
 #define MAX_LOADSTRING 100
@@ -23,6 +24,7 @@ MyImage			inImage;						// image objects
 HINSTANCE		hInst;							// current instance
 TCHAR szTitle[MAX_LOADSTRING];					// The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];			// The title bar text
+extern bool showBlocks = false;
 
 // Forward declarations of functions included in this code module:
 ATOM				MyRegisterClass(HINSTANCE hInstance);
@@ -30,6 +32,24 @@ BOOL				InitInstance(HINSTANCE, int);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 
+//struct Block
+//{
+//	int x;
+//	int y;
+//	int size;
+//
+//	std::vector<std::vector<std::vector<int>>> qCoeff;
+//
+//	Block(int x0, int y0, int N)
+//	{
+//		x = x0;
+//		y = y0;
+//		size = N;
+//
+//		qCoeff.resize(3, std::vector<std::vector<int>>(N, std::vector<int>(N)));
+//	}
+//};
+//std::vector<Block*> allBlocks;
 
 // Main entry point for a windows application
 int APIENTRY WinMain(HINSTANCE hInstance,
@@ -164,6 +184,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	inImage.ReadImage();
 
 	inImage.Compress(mode, quantizer, bitsPerPixel);
+
+
 	//inImage.Quantize(scale, quantization, mode, extra);
 	//inImage.Modify(scale, quantization, mode, extra);
 	//inImage.WriteImage();
@@ -329,12 +351,59 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 								  0,100,inImage.getWidth(),inImage.getHeight(),
 								  0,0,0,inImage.getHeight(),
 								  inImage.getImageData(),&bmi,DIB_RGB_COLORS);
+
+				if (showBlocks)
+				{
+					
+
+					int blockSize = 8; // for M=1
+
+					HPEN pen = CreatePen(PS_SOLID, 1, RGB(255, 0, 0));
+					HPEN oldPen = (HPEN)SelectObject(hdc, pen);
+					HBRUSH oldBrush = (HBRUSH)SelectObject(hdc, GetStockObject(NULL_BRUSH));
+
+					int width = inImage.getWidth();
+					int height = inImage.getHeight();
+
+					int offsetY = 100; // image starts at y=100 in your code
+
+					for (Block* b : inImage.compressor->getAllBlocks())
+					{
+						Rectangle(hdc,
+							b->x,
+							offsetY + b->y,
+							b->x + b->size,
+							offsetY + b->y + b->size);
+					}
+
+					/*for (int x = 0; x <= width; x += blockSize)
+					{
+						MoveToEx(hdc, x, offsetY, NULL);
+						LineTo(hdc, x, offsetY + height);
+					}
+
+					for (int y = 0; y <= height; y += blockSize)
+					{
+						MoveToEx(hdc, 0, offsetY + y, NULL);
+						LineTo(hdc, width, offsetY + y);
+					}*/
+
+					SelectObject(hdc, oldPen);
+					DeleteObject(pen);
+				}
 							   
 				EndPaint(hWnd, &ps);
 			}
 			break;
 		case WM_DESTROY:
 			PostQuitMessage(0);
+			break;
+		case WM_KEYDOWN:
+			if (wParam == 'B' || wParam == 'b')
+			{
+				showBlocks = !showBlocks;   // toggle on/off
+				InvalidateRect(hWnd, NULL, false); // redraw window
+			}
 			break;
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
