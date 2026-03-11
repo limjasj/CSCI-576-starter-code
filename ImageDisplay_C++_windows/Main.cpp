@@ -58,54 +58,99 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	char* quantization = "";
 	char* mode = "";
 	char* extra = "";
+	char* quantizer = "";
+	char* bitsPerPixel = "";
 
-	while (lpCmdLine[cnt] != ' ' && lpCmdLine[cnt] != 0) {
-		cnt++;
-	}
-	lpCmdLine[cnt] = 0;
-	printf("The first parameter was: %s \n", lpCmdLine);
+	bool isCompression = true;
 
-	cnt++;
-	startCnt = cnt;
-	scale = &lpCmdLine[startCnt];
-	while (lpCmdLine[cnt] != ' ' && lpCmdLine[cnt] != 0)
+	if (!isCompression)
 	{
-		cnt++;
-	}
-	lpCmdLine[cnt] = 0;
-	printf("The second parameter was: %s \n", &lpCmdLine[startCnt]);
+		while (lpCmdLine[cnt] != ' ' && lpCmdLine[cnt] != 0) {
+			cnt++;
+		}
+		lpCmdLine[cnt] = 0;
+		printf("The first parameter was: %s \n", lpCmdLine);
 
-	cnt++;
-	startCnt = cnt;
-	quantization = &lpCmdLine[startCnt];
-	while (lpCmdLine[cnt] != ' ' && lpCmdLine[cnt] != 0)
+		cnt++;
+		startCnt = cnt;
+		scale = &lpCmdLine[startCnt];
+		while (lpCmdLine[cnt] != ' ' && lpCmdLine[cnt] != 0)
+		{
+			cnt++;
+		}
+		lpCmdLine[cnt] = 0;
+		printf("The second parameter was: %s \n", &lpCmdLine[startCnt]);
+
+		cnt++;
+		startCnt = cnt;
+		quantization = &lpCmdLine[startCnt];
+		while (lpCmdLine[cnt] != ' ' && lpCmdLine[cnt] != 0)
+		{
+			cnt++;
+		}
+		lpCmdLine[cnt] = 0;
+		printf("The third parameter was: %s \n", &lpCmdLine[startCnt]);
+
+		cnt++;
+		startCnt = cnt;
+		mode = &lpCmdLine[startCnt];
+		while (lpCmdLine[cnt] != ' ' && lpCmdLine[cnt] != 0)
+		{
+			cnt++;
+		}
+		lpCmdLine[cnt] = 0;
+		printf("The fourth parameter was: %s \n", &lpCmdLine[startCnt]);
+
+		cnt++;
+		startCnt = cnt;
+		extra = &lpCmdLine[startCnt];
+		while (lpCmdLine[cnt] != ' ' && lpCmdLine[cnt] != 0)
+		{
+			cnt++;
+		}
+		if (cnt == startCnt) extra = 0;
+		lpCmdLine[cnt] = 0;
+		printf("The fifth parameter was: %s \n", &lpCmdLine[startCnt]);
+	}
+
+	if (isCompression)
 	{
-		cnt++;
-	}
-	lpCmdLine[cnt] = 0;
-	printf("The third parameter was: %s \n", &lpCmdLine[startCnt]);
+		while (lpCmdLine[cnt] != ' ' && lpCmdLine[cnt] != 0) {
+			cnt++;
+		}
+		lpCmdLine[cnt] = 0;
+		printf("The first parameter was: %s \n", lpCmdLine);
 
-	cnt++;
-	startCnt = cnt;
-	mode = &lpCmdLine[startCnt];
-	while (lpCmdLine[cnt] != ' ' && lpCmdLine[cnt] != 0)
-	{
 		cnt++;
-	}
-	lpCmdLine[cnt] = 0;
-	printf("The fourth parameter was: %s \n", &lpCmdLine[startCnt]);
+		startCnt = cnt;
+		mode = &lpCmdLine[startCnt];
+		while (lpCmdLine[cnt] != ' ' && lpCmdLine[cnt] != 0)
+		{
+			cnt++;
+		}
+		lpCmdLine[cnt] = 0;
+		printf("The mode is: %s \n", &lpCmdLine[startCnt]);
 
-	cnt++;
-	startCnt = cnt;
-	extra = &lpCmdLine[startCnt];
-	while (lpCmdLine[cnt] != ' ' && lpCmdLine[cnt] != 0)
-	{
 		cnt++;
-	}
-	if (cnt == startCnt) extra = 0;
-	lpCmdLine[cnt] = 0;
-	printf("The fifth parameter was: %s \n", &lpCmdLine[startCnt]);
+		startCnt = cnt;
+		quantizer = &lpCmdLine[startCnt];
+		while (lpCmdLine[cnt] != ' ' && lpCmdLine[cnt] != 0)
+		{
+			cnt++;
+		}
+		lpCmdLine[cnt] = 0;
+		printf("The quantizer is: %s \n", &lpCmdLine[startCnt]);
 
+		cnt++;
+		startCnt = cnt;
+		bitsPerPixel = &lpCmdLine[startCnt];
+		while (lpCmdLine[cnt] != ' ' && lpCmdLine[cnt] != 0)
+		{
+			cnt++;
+		}
+		lpCmdLine[cnt] = 0;
+		printf("The bitsPerPixel is: %s \n", &lpCmdLine[startCnt]);
+	}
 
 	// Set up the images
 	// Modify the height and width values here to read and display an image with
@@ -118,7 +163,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	inImage.setImagePath(lpCmdLine);
 	inImage.ReadImage();
 
-	inImage.Quantize(scale, quantization, mode, extra);
+	inImage.Compress(mode, quantizer, bitsPerPixel);
+	//inImage.Quantize(scale, quantization, mode, extra);
 	//inImage.Modify(scale, quantization, mode, extra);
 	//inImage.WriteImage();
 

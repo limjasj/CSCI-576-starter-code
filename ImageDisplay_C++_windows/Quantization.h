@@ -1,6 +1,5 @@
 #ifndef QUANTIZATION
 #define QUANTIZATION
-#include "Image.h"
 
 #define CRT_SECURE_NO_WARNINGS
 
@@ -18,22 +17,21 @@
 #include <memory.h>
 #include <tchar.h>
 
-class Quantization
+class Quantization 
 {
-
-private:
-	MyImage *image;
+private :
+	class MyImage* thisImage;
 
 public:
 
-	static bool Modify(char* scaleCh, char* quantizationCh, char* modeCh, char* extraCh, MyImage* thisImage);
-	static int AverageKernel(int color, int oldX, int oldY, int oldWidth, int oldHeight, MyImage* thisImage);
-	static void LinearQuantization(int quantization, MyImage* thisImage);
-	static void LinearQuantizationExtra(int quantization, MyImage* thisImage);
-	static void LogarithmicQuantization(int quantization, int mode, MyImage* thisImage);
-	static void LogarithmicQuantizationExtra(int quantization, int mode, MyImage* thisImage);
-	static void OptimalIntervalQuantization(int quantization, MyImage* thisImage);
-	static void OptimalIntervalQuantizationExtra(int quantization, MyImage* thisImage);
+	 bool Modify(char* scaleCh, char* quantizationCh, char* modeCh, char* extraCh, MyImage* thisImage);
+	 int AverageKernel(int color, int oldX, int oldY, int oldWidth, int oldHeight, MyImage* thisImage);
+	 void LinearQuantization(int quantization, MyImage* thisImage);
+	 void LinearQuantizationExtra(int quantization, MyImage* thisImage);
+	 void LogarithmicQuantization(int quantization, int mode, MyImage* thisImage);
+	 void LogarithmicQuantizationExtra(int quantization, int mode, MyImage* thisImage);
+	 void OptimalIntervalQuantization(int quantization, MyImage* thisImage);
+	 void OptimalIntervalQuantizationExtra(int quantization, MyImage* thisImage);
 
 
 };

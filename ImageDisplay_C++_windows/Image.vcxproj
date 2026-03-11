@@ -125,11 +125,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Compression.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Quantization.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Compression.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="Quantization.h" />
     <ClInclude Include="resource.h" />

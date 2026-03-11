@@ -63,8 +63,15 @@ public:
 	bool	WriteImage();
 
 	// Modifications
-	bool	Modify();
+	bool Modify();
 	bool Quantize(char* scaleCh, char* quantizationCh, char* modeCh, char* extraCh);
+	bool Compress(char* modeCh, char* quantizerCh, char* bitsPerPixelCl);
+
+	// Helper functions
+	 int MyImage::getPixel(int x, int y, int c);
+
+	 void MyImage::setPixel(int x, int y, int c, int value);
+
 	/*bool Modify(char* scaleCh, char* quantizationCh, char* modeCh, char* extraCh);
 	int AverageKernel(int color, int oldX, int oldY, int oldWidth, int oldHeight);
 	void LinearQuantization(int quantization);

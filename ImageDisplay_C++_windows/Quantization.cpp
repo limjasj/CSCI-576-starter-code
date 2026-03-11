@@ -9,14 +9,18 @@
 
 #include <cmath>
 #include <vector>
+#include "Image.h"
+
 
 int roundNum(float num)
 {
 	return static_cast<int>(num + 0.5f);
 }
 
-bool Quantization::Modify(char* scaleCh, char* quantizationCh, char* modeCh, char* extraCh,MyImage* thisImage)
+bool Quantization::Modify(char* scaleCh, char* quantizationCh, char* modeCh, char* extraCh,MyImage* poop)
 {
+	thisImage = poop;
+
 	float scale = std::stof(scaleCh);
 	int quantization = std::stoi(quantizationCh);
 	int mode = std::stoi(modeCh);
@@ -101,7 +105,7 @@ bool Quantization::Modify(char* scaleCh, char* quantizationCh, char* modeCh, cha
 
 
 
-int Quantization::AverageKernel(int color, int oldX, int oldY, int oldWidth, int oldHeight, MyImage* thisImage)
+int Quantization::AverageKernel(int color, int oldX, int oldY, int oldWidth, int oldHeight, MyImage* poop)
 {
 	int sum = 0;
 	int count = 0;
@@ -128,7 +132,7 @@ int Quantization::AverageKernel(int color, int oldX, int oldY, int oldWidth, int
 	return avg;
 }
 
-void Quantization::LinearQuantization(int quantization, MyImage* thisImage)
+void Quantization::LinearQuantization(int quantization, MyImage* poop)
 {
 	int bitsPerChannel = quantization / 3;
 	int levels = 1 << bitsPerChannel; // 2^bitsPerChannel
@@ -150,7 +154,7 @@ void Quantization::LinearQuantization(int quantization, MyImage* thisImage)
 	//std::cout <<meanAbsError << std::endl;
 }
 
-void Quantization::LogarithmicQuantization(int quantization, int mode, MyImage* thisImage)
+void Quantization::LogarithmicQuantization(int quantization, int mode, MyImage* poop)
 {
 	int bitsPerChannel = quantization / 3;
 	int levels = 1 << bitsPerChannel; // 2^bitsPerChannel //when 12, should be 16
@@ -188,7 +192,7 @@ void Quantization::LogarithmicQuantization(int quantization, int mode, MyImage* 
 	//std::cout  << meanAbsError << std::endl;
 }
 
-void Quantization::OptimalIntervalQuantization(int quantization, MyImage* thisImage)
+void Quantization::OptimalIntervalQuantization(int quantization, MyImage* poop)
 {
 	int bitsPerChannel = quantization / 3;
 	int levels = 1 << bitsPerChannel;
@@ -281,7 +285,7 @@ void Quantization::OptimalIntervalQuantization(int quantization, MyImage* thisIm
 	//std::cout << meanAbsError << std::endl;
 }
 
-void Quantization::LinearQuantizationExtra(int quantization, MyImage* thisImage)
+void Quantization::LinearQuantizationExtra(int quantization, MyImage* poop)
 {
 	double meanAbsError = 0.0f;
 	double bestError = DBL_MAX;
@@ -345,7 +349,7 @@ void Quantization::LinearQuantizationExtra(int quantization, MyImage* thisImage)
 	//std::cout << meanAbsError << std::endl;
 }
 
-void Quantization::LogarithmicQuantizationExtra(int quantization, int mode, MyImage* thisImage)
+void Quantization::LogarithmicQuantizationExtra(int quantization, int mode, MyImage* poop)
 {
 	double meanAbsError = 0.0f;
 	double bestError = DBL_MAX;
@@ -442,7 +446,7 @@ void Quantization::LogarithmicQuantizationExtra(int quantization, int mode, MyIm
 	//std::cout << meanAbsError << std::endl;
 }
 
-void Quantization::OptimalIntervalQuantizationExtra(int quantization, MyImage* thisImage)
+void Quantization::OptimalIntervalQuantizationExtra(int quantization, MyImage* poop)
 {
 	float meanAbsError = 0.0f;
 
