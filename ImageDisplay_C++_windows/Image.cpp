@@ -216,8 +216,6 @@ bool MyImage::Modify()
 
 bool MyImage::Quantize(char* scaleCh, char* quantizationCh, char* modeCh, char* extraCh)
 {
-	//Quantization::Modify(scaleCh, quantizationCh, modeCh, extraCh, this);
-	//Quantization q;
 	quantizer = new Quantization();
 	quantizer->Modify(scaleCh, quantizationCh, modeCh, extraCh, this);
 
@@ -226,7 +224,6 @@ bool MyImage::Quantize(char* scaleCh, char* quantizationCh, char* modeCh, char* 
 
 bool MyImage::Compress(char* modeCh, char* quantizerCh, char* bitsPerPixelCh)
 {
-	//Compression c;
 	compressor = new Compression();
 	compressor->Modify(modeCh, quantizerCh, bitsPerPixelCh, this);
 	return false;
@@ -234,11 +231,21 @@ bool MyImage::Compress(char* modeCh, char* quantizerCh, char* bitsPerPixelCh)
 
  int MyImage::getPixel(int x, int y, int c)
 {
-	return Data[(y * Width + x) * 3 + c];
+	 if ((x >= Width ) && (x < 0) || (y >= Height ) && (x < 0))
+	 {
+		 return -1;
+	 }
+	 int value = Data[(y * Width + x) * 3 + c];
+	return value;
 }
 
  void MyImage::setPixel(int x, int y, int c, int value)
 {
+	 if ((x >= Width) && (x < 0) || (y >= Height) && (x < 0))
+	 {
+		 return;
+	 }
+
 	if (value < 0) value = 0;
 	if (value > 255) value = 255;
 

@@ -15,10 +15,7 @@ void Compression::Modify(char* modeCh, char* quantizerCh, char* bitsPerPixelCh, 
     int mode = std::stof(modeCh);
     int quantizer = std::stoi(quantizerCh);
     float bitsPerPixel = std::stoi(bitsPerPixelCh);
-    
-    //hard code values
-    quantizer = 5;
-    bitsPerPixel = -1;
+
 
     if (((quantizer == -1) && (bitsPerPixel == -1)) ||
         ((quantizer != -1) && (bitsPerPixel != -1)))
@@ -29,10 +26,7 @@ void Compression::Modify(char* modeCh, char* quantizerCh, char* bitsPerPixelCh, 
 
     if (quantizer == -1)
     {
-        //int size = testBlockSize(1, 8);
-
-        //int targetBytes = image->Width * image->Height * bitsPerPixel / 8;
-		int targetBitsPerBlock = bitsPerPixel * 64; // 64 pixels in an 8x8 block
+        int targetBitsPerBlock = bitsPerPixel * 64; // 64 pixels in an 8x8 block
 		int targetBitsTotal = bitsPerPixel * image->Width * image->Height;
 
         int low = 1;
@@ -47,7 +41,7 @@ void Compression::Modify(char* modeCh, char* quantizerCh, char* bitsPerPixelCh, 
 
             if (size > targetBitsTotal)
             {
-                // too big → increase compression
+                // too big, increase compression
                 low = mid + 1;
             }
             else
@@ -59,42 +53,64 @@ void Compression::Modify(char* modeCh, char* quantizerCh, char* bitsPerPixelCh, 
 		quantizer = bestQ;
     }
 
-    //input IMAGE
-    //    ↓
-    //    Divide image into blocks
-    //    ↓
-    //    DCT transform per block
-    //    ↓
-    //    Quantize DCT coefficients
-    //    ↓
-    //    Save quantized coefficients to.DCT file
-    //    ↓
-    //    Inverse Quantization
-    //    ↓
-    //    Inverse DCT
-    //    ↓
-    //    Reconstruct image
-    //    ↓
-    //    Display image
-    
-    //mode ==1
-    //iterate through 8x8 blocks
 
-	//int blockNum = 3;
-
-    for (int y = 0; y < image->Height; y += 8)
+    if (mode == 1)
     {
-        for (int x = 0; x < image->Width; x += 8)
+        for (int y = 0; y < image->Height; y += 8)
         {
-            //cout << "blockNum: " << blockNum << endl;
-            //blockNum++;
-            processBlock(x, y, 8, quantizer);
+            for (int x = 0; x < image->Width; x += 8)
+            {
+                processBlock(x, y, 8, quantizer);
+            }
+        }
+    }
+    else if (mode == 2)
+    {
+        //n = 2, 4, 8, 16, 32
+        for (int y = 0; y < image->Height; y += 32)
+        {
+            for (int x = 0; x < image->Width; x += 32)
+            {
+                splitBlock(x, y, 32);
+            }
+        }
+
+        for (int i = 0; i < allBlocks.size(); i++)
+        {
+            Block* block = allBlocks[i];
+            processDynamicBlock(block->x, block->y, block->size, quantizer, block);
         }
     }
 
     // write to file
     saveDCT("InputImage.DCT");
 
+}
+
+void Compression::splitBlock(int x, int y, int size)
+{
+	Block* block = new Block(x, y, size);
+
+    if (size <= 2)
+    {
+        allBlocks.push_back(block);
+        return;
+    }
+
+    double var = findVariance(x, y, size);
+
+    if (var < 2200)   // threshold
+    {
+        allBlocks.push_back(block);
+        return;
+    }
+
+    int half = size / 2;
+
+    splitBlock(x, y, half);
+    splitBlock(x + half, y, half);
+    splitBlock(x, y + half, half);
+    splitBlock(x + half, y + half, half);
 }
 
 int Compression::testBlockSize(int Q, int N)
@@ -104,18 +120,13 @@ int Compression::testBlockSize(int Q, int N)
     int totalBits = 0;
     static std::random_device rd;
     static std::mt19937 gen(rd());
-    //std::uniform_int_distribution<> randWidth(0, image->Width);
-    //std::uniform_int_distribution<> randHeight(0, image->Height);
 
-    for (int y = 0; y < image->Height; y += 8)
+    for (int y = 0; y < image->Height; y += N)
     {
-        for (int x = 0; x < image->Width; x += 8)
+        for (int x = 0; x < image->Width; x += N)
         {
-            for (int i = 0; i < 10; i++)
+            //for (int i = 0; i < 10; i++)
             {
-                //int randomX = randWidth(gen);
-                //int randomY = randHeight(gen);
-
                 for (int c = 0; c < 3; c++)
                 {
                     vector<vector<double>> block(N, vector<double>(N));
@@ -123,9 +134,9 @@ int Compression::testBlockSize(int Q, int N)
                     vector<vector<int>> qcoeff(N, vector<int>(N));
 
                     // extract block
-                    for (int x = 0; x < N; x++) {
-                        for (int y = 0; y < N; y++) {
-                            block[x][y] = image->getPixel(x, y, c);
+                    for (int v = 0; v < N; v++) {
+                        for (int u = 0; u < N; u++) {
+                            block[u][v] = image->getPixel(x +u, y+v, c);
                         }
                     }
 
@@ -136,16 +147,16 @@ int Compression::testBlockSize(int Q, int N)
                     quantizeBlock(coeff, qcoeff, N, Q);
 
                     int qcoeffSize = getQcoeffSize(qcoeff, N);
-                    totalBits += qcoeffSize * 8;
+                    totalBits += qcoeffSize * N;
                 }
             }
         }
     }
 
 	int avg = totalBits ;
-    return avg;
-    
+    return avg;    
 }
+
 
 int Compression::getQcoeffSize(std::vector<std::vector<int>>& qcoeff, int N)
 {
@@ -165,39 +176,42 @@ int Compression::getQcoeffSize(std::vector<std::vector<int>>& qcoeff, int N)
 
 void Compression::processBlock(int startX, int startY, int N, int Q)
 {
-    Block* myBlock = new Block(startX, startY, N);
+    int size = N;
+
+    Block* myBlock = new Block(startX, startY, size);
+    myBlock->size = size;
 
     for (int c = 0; c < 3; c++)
     {
         //cout << "color: " << c << endl;
 
-        vector<vector<double>> block(N, vector<double>(N));
-        vector<vector<double>> coeff(N, vector<double>(N));
-        vector<vector<int>> qcoeff(N, vector<int>(N));
+        vector<vector<double>> block(size, vector<double>(size));
+        vector<vector<double>> coeff(size, vector<double>(size));
+        vector<vector<int>> qcoeff(size, vector<int>(size));
 
         // extract block
-        for (int x = 0; x < N; x++) {
-            for (int y = 0; y < N; y++) {
+        for (int x = 0; x < size; x++) {
+            for (int y = 0; y < size; y++) {
                 block[x][y] = image->getPixel(startX + x, startY + y, c);
             }
         }
 
         // DCT
-        computeDCT(block, coeff, N);
+        computeDCT(block, coeff, size);
 
         // quantize
-        quantizeBlock(coeff, qcoeff, N, Q);
+        quantizeBlock(coeff, qcoeff, size, Q);
 
         // inverse quantize
-        inverseQuantizeBlock(qcoeff, coeff, N, Q);
+        inverseQuantizeBlock(qcoeff, coeff, size, Q);
 
         // IDCT
-        computeIDCT(coeff, block, N);        
+        computeIDCT(coeff, block, size);
 
         // write pixels back
-        for (int x = 0; x < N; x++)
+        for (int x = 0; x < size; x++)
         {
-            for (int y = 0; y < N; y++)
+            for (int y = 0; y < size; y++)
             {
                 image->setPixel(startX + x, startY + y, c, round(block[x][y]));
             }
@@ -207,6 +221,52 @@ void Compression::processBlock(int startX, int startY, int N, int Q)
     }
 
     allBlocks.push_back(myBlock);
+}
+
+void Compression::processDynamicBlock(int startX, int startY, int N, int Q, Block* currBlock)
+{
+    int size = currBlock->size;
+
+    for (int c = 0; c < 3; c++)
+    {
+        //cout << "color: " << c << endl;
+
+        vector<vector<double>> block(size, vector<double>(size));
+        vector<vector<double>> coeff(size, vector<double>(size));
+        vector<vector<int>> qcoeff(size, vector<int>(size));
+
+        // extract block
+        for (int x = 0; x < size; x++) {
+            for (int y = 0; y < size; y++) {
+                block[x][y] = image->getPixel(startX + x, startY + y, c);
+            }
+        }
+
+        // DCT
+        computeDCT(block, coeff, size);
+
+        // quantize
+        quantizeBlock(coeff, qcoeff, size, Q);
+
+        // inverse quantize
+        inverseQuantizeBlock(qcoeff, coeff, size, Q);
+
+        // IDCT
+        computeIDCT(coeff, block, size);
+
+        // write pixels back
+        for (int x = 0; x < size; x++)
+        {
+            for (int y = 0; y < size; y++)
+            {
+                int val = round(block[x][y]);
+                val = max(0, min(255, val));
+                image->setPixel(startX + x, startY + y, c, val);
+            }
+        }
+
+        currBlock->qCoeff[c] = qcoeff;
+    }
 
 }
 
@@ -215,7 +275,7 @@ void Compression::computeDCT(std::vector<std::vector<double>>& block,
 {
     //iterate through each pixel in block
     //for each pixel, calculate the coefficient (from actual value)
-	//n = dimension of block (eg 8 for 8x8)
+	//n = dimension of block 
 
     for (int u = 0; u < N; u++)
     {
@@ -236,10 +296,10 @@ void Compression::computeDCT(std::vector<std::vector<double>>& block,
             }
 
 
-            double Cu = (u == 0) ? 1.0 / sqrt(2) : 1.0;
-            double Cv = (v == 0) ? 1.0 / sqrt(2) : 1.0;
+            double Cu = (u == 0) ? sqrt(1.0 / N) : sqrt(2.0 / N);
+            double Cv = (v == 0) ? sqrt(1.0 / N) : sqrt(2.0 / N);
 
-			double value = 0.25 * Cu * Cv * sum;
+            double value = Cu * Cv * sum;
             coeff[u][v] = value;
         }
     }
@@ -261,8 +321,8 @@ void Compression::computeIDCT(std::vector<std::vector<double>>& coeff,
             {
                 for (int v = 0; v < N; v++)
                 {
-                    double Cu = (u == 0) ? 1.0 / sqrt(2) : 1.0;
-                    double Cv = (v == 0) ? 1.0 / sqrt(2) : 1.0;
+                    double Cu = (u == 0) ? sqrt(1.0 / N) : sqrt(2.0 / N);
+                    double Cv = (v == 0) ? sqrt(1.0 / N) : sqrt(2.0 / N);
 
                     sum += Cu * Cv * coeff[u][v] *
                         cos((2 * x + 1) * u * PI / (2 * N)) *
@@ -270,7 +330,7 @@ void Compression::computeIDCT(std::vector<std::vector<double>>& coeff,
                 }
             }
 
-            block[x][y] = 0.25 * sum;
+            block[x][y] = sum;
         }
     }
 }
@@ -308,7 +368,7 @@ void Compression::inverseQuantizeBlock(std::vector<std::vector<int>>& qcoeff,
 
 void Compression::saveDCT(string filename)
 {
-	//save quantized coefficients to .DCT file
+	//save quantized coefficients to dct file
     //for each color for each block
 
     FILE* f = fopen(filename.c_str(), "wb");
@@ -329,4 +389,39 @@ void Compression::saveDCT(string filename)
     }
 
     fclose(f);
+}
+
+double Compression::findVariance(int startX, int startY, int size)
+{
+    double avg = 0;
+    int count = size * size * 3;
+
+    //find avg
+    for (int y = 0; y < size; y++)
+    {
+        for (int x = 0; x < size; x++)
+        {
+            for (int i = 0; i < 3; i++) //for each color
+            {
+                avg += image->getPixel(startX + x, startY + y, i);
+            }
+        }
+    }
+    avg /= count;
+
+	//add up how much each pixel value deviates from the avg
+    double totalVariance = 0;
+    for (int y = 0; y < size; y++)
+    {
+        for (int x = 0; x < size; x++)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                double currPoint = image->getPixel(startX + x, startY + y, i);
+                totalVariance += (currPoint - avg) * (currPoint - avg);
+            }
+        }
+    }
+
+    return totalVariance / count;
 }

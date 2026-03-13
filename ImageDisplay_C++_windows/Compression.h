@@ -59,6 +59,7 @@ public:
         vector<vector<double>>& coeff, int N);
 	
     void processBlock(int startX, int startY, int N, int Q);
+    void processDynamicBlock(int startX, int startY, int N, int Q, Block* block);
     
     void computeIDCT(vector<vector<double>>& coeff,
         vector<vector<double>>& block, int N);
@@ -72,8 +73,12 @@ public:
     void saveDCT(string filename);
 
 	int testBlockSize(int Q, int N);
+    int testDynamicBlockSize(int Q, int N);
 
     int getQcoeffSize(std::vector<std::vector<int>>& qcoeff, int N);
+
+	double findVariance(int startX, int startY, int size);
+    void splitBlock(int x, int y, int size);
 };
 
 #endif

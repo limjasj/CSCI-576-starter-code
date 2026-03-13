@@ -354,10 +354,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 				if (showBlocks)
 				{
-					
-
-					int blockSize = 8; // for M=1
-
 					HPEN pen = CreatePen(PS_SOLID, 1, RGB(255, 0, 0));
 					HPEN oldPen = (HPEN)SelectObject(hdc, pen);
 					HBRUSH oldBrush = (HBRUSH)SelectObject(hdc, GetStockObject(NULL_BRUSH));
@@ -375,18 +371,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 							b->x + b->size,
 							offsetY + b->y + b->size);
 					}
-
-					/*for (int x = 0; x <= width; x += blockSize)
-					{
-						MoveToEx(hdc, x, offsetY, NULL);
-						LineTo(hdc, x, offsetY + height);
-					}
-
-					for (int y = 0; y <= height; y += blockSize)
-					{
-						MoveToEx(hdc, 0, offsetY + y, NULL);
-						LineTo(hdc, width, offsetY + y);
-					}*/
 
 					SelectObject(hdc, oldPen);
 					DeleteObject(pen);
